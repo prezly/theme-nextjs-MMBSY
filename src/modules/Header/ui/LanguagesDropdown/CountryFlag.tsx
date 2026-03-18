@@ -11,11 +11,18 @@ interface CountryFlagProps {
     countryName: string;
 }
 
+/** Special-case overrides: locale/country code → flag country code */
+const FLAG_CODE_OVERRIDES: Record<string, string> = {
+    en: 'gb',
+};
+
 /**
  * Renders a country flag SVG. Falls back to a globe icon if the flag is not found.
  */
 export function CountryFlag({ countryCode, countryName }: CountryFlagProps) {
-    if (countryCode.toLowerCase() === 'europe' || countryCode === '') {
+    const resolved = FLAG_CODE_OVERRIDES[countryCode.toLowerCase()] ?? countryCode;
+
+    if (resolved.toLowerCase() === 'europe' || resolved === '') {
         return (
             <span className={styles.flagWrapper} aria-hidden>
                 <IconGlobe className={styles.flag} aria-label={`${countryName} icon`} />
@@ -23,16 +30,16 @@ export function CountryFlag({ countryCode, countryName }: CountryFlagProps) {
         );
     }
 
-    const flagKey = `Flag${countryCode.toUpperCase()}` as keyof typeof FlagIcons;
+    const flagKey = `Flag${resolved.toUpperCase()}` as keyof typeof FlagIcons;
     const FlagIcon = FlagIcons[flagKey] as IconComponentType | undefined;
-
-    if (!FlagIcon) {
-        return null;
-    }
 
     return (
         <span className={styles.flagWrapper} aria-hidden>
-            <FlagIcon className={styles.flag} aria-label={`${countryName} flag`} />
+            {FlagIcon ? (
+                <FlagIcon className={styles.flag} aria-label={`${countryName} flag`} />
+            ) : (
+                <IconGlobe className={styles.flag} aria-label={`${countryName} icon`} />
+            )}
         </span>
     );
 }

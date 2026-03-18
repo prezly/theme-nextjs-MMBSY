@@ -56,6 +56,18 @@
     white-space: nowrap;
 }
 
+// On mobile the dropdown is force-open — the trigger acts as a section label, not a button
+.buttonForceOpen {
+    @include mobile-only {
+        pointer-events: none;
+        opacity: 0.55;
+        font-size: $font-size-s;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding-bottom: $spacing-2;
+    }
+}
+
 // Active language: non-clickable with subtle highlight
 .disabled {
     pointer-events: none;

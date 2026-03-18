@@ -5,6 +5,7 @@ import type { Locale } from '@prezly/theme-kit-nextjs';
 import classNames from 'classnames';
 
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
+import { useDevice } from '@/hooks';
 import { analytics } from '@/utils';
 
 import { CountryFlag } from './CountryFlag';
@@ -16,14 +17,15 @@ export function LanguagesDropdown({
     buttonClassName,
     navigationItemClassName,
 }: LanguagesDropdown.Props) {
+    const { isMobile } = useDevice();
     const selectedOption = options.find((option) => option.code === selected);
     const displayedOptions = [...options].sort((a, b) => a.title.localeCompare(b.title));
 
     const triggerLabel = (
         <span className={styles.triggerContent}>
-            {selectedOption?.countryCode && (
+            {selectedOption && (
                 <CountryFlag
-                    countryCode={selectedOption.countryCode}
+                    countryCode={selectedOption.countryCode ?? selectedOption.code}
                     countryName={selectedOption.title}
                 />
             )}
@@ -36,8 +38,11 @@ export function LanguagesDropdown({
             <Dropdown
                 label={triggerLabel}
                 menuClassName={styles.menu}
-                buttonClassName={classNames(buttonClassName, styles.button)}
+                buttonClassName={classNames(buttonClassName, styles.button, {
+                    [styles.buttonForceOpen]: !!isMobile,
+                })}
                 withMobileDisplay
+                forceOpen={!!isMobile}
             >
                 {displayedOptions.map(({ code, href, title, countryCode }) => (
                     <DropdownItem
@@ -50,9 +55,7 @@ export function LanguagesDropdown({
                         linkClassName={styles.languageLink}
                         onClick={() => analytics.track(ACTIONS.SWITCH_LANGUAGE, { code })}
                     >
-                        {countryCode && (
-                            <CountryFlag countryCode={countryCode} countryName={title} />
-                        )}
+                        <CountryFlag countryCode={countryCode ?? code} countryName={title} />
                         <span className={styles.languageLabel}>{title}</span>
                     </DropdownItem>
                 ))}

@@ -21,11 +21,13 @@ import { Button, ButtonLink } from '@/components/Button';
 import { CategoriesBar } from '@/components/CategoriesBar';
 import { Link } from '@/components/Link';
 import { useDevice, usePreviewSettings } from '@/hooks';
-import { IconClose, IconExternalLink, IconMenu, IconSearch } from '@/icons';
+import { IconCaret, IconClose, IconExternalLink, IconMenu, IconSearch } from '@/icons';
 import { useBroadcastedPageTypeCheck } from '@/modules/Broadcast';
 import type { ThemeSettings } from '@/theme-settings';
 import type { SearchSettings } from '@/types';
-import { isPreviewActive } from '@/utils';
+import { isPreviewActive, parseLocaleCode } from '@/utils';
+
+import { CountryFlag } from './LanguagesDropdown/CountryFlag';
 
 import { Categories } from './Categories';
 import { Logo, LogoPlaceholder } from './Logo';
@@ -251,7 +253,7 @@ export function Header({
                             {shouldShowMenu && (
                                 <Button
                                     variation="navigation"
-                                    icon={isMenuOpen ? IconClose : IconMenu}
+                                    icon={isMenuOpen ? IconClose : undefined}
                                     className={classNames(styles.navigationToggle, {
                                         [styles.hidden]: isSearchOpen,
                                     })}
@@ -262,7 +264,22 @@ export function Header({
                                     aria-label={formatMessage(
                                         translations.misc.toggleMobileNavigation,
                                     )}
-                                />
+                                >
+                                    {!isMenuOpen && (
+                                        <span className={styles.flagToggle}>
+                                            <CountryFlag
+                                                countryCode={parseLocaleCode(localeCode) ?? localeCode}
+                                                countryName=""
+                                            />
+                                            <IconCaret
+                                                aria-hidden
+                                                width={10}
+                                                height={10}
+                                                className={styles.flagToggleCaret}
+                                            />
+                                        </span>
+                                    )}
+                                </Button>
                             )}
 
                             <div

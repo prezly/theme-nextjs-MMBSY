@@ -104,7 +104,7 @@ export default async function MainLayout(props: Props) {
     const { isTrackingEnabled } = analytics();
     const newsroom = await app().newsroom();
     const localePickerOptions = await buildLocalePickerOptions();
-    const logoUrl = newsroom.newsroom_logo?.url ?? null;
+    const logoUrl = newsroom.newsroom_logo?.cdnUrl ?? null;
 
     return (
         <PreviewSettingsProvider>

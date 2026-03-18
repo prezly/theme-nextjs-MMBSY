@@ -36,8 +36,8 @@
 
 .logo {
     display: block;
-    max-width: 180px;
-    max-height: 64px;
+    max-width: 270px;
+    max-height: 96px;
     width: auto;
     height: auto;
     margin: 0 auto $spacing-2;
@@ -77,16 +77,15 @@
     align-items: center;
     gap: $spacing-3;
     padding: $spacing-5 $spacing-4;
-    border: 2px solid var(--prezly-border-color, #e5e7eb);
+    border: none;
     border-radius: 10px;
     background: var(--prezly-background-color, #fff);
     cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
     min-width: 0;
 
     &:hover {
-        border-color: var(--prezly-accent-color, #2563eb);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
         transform: translateY(-2px);
     }
 
@@ -109,14 +108,25 @@
 }
 
 .flagIcon {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3.75rem;
+    height: 3.75rem;
     border-radius: 50%;
     object-fit: cover;
 
     @include mobile-only {
-        width: 2rem;
-        height: 2rem;
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+.globeIcon {
+    width: 3.75rem;
+    height: 3.75rem;
+    color: var(--prezly-text-color-secondary, #6b7280);
+
+    @include mobile-only {
+        width: 3rem;
+        height: 3rem;
     }
 }
 

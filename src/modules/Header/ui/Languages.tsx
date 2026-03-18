@@ -17,7 +17,7 @@ export function Languages({ selected, options, ...rest }: Languages.Props) {
         const displayedOptions = options.filter(
             (option) => option.code === selected || broadcasted[option.code] || option.stories > 0,
         );
-        return withHrefOverrides(withDisplayNames(displayedOptions), broadcasted);
+        return withHrefOverrides(withDisplayNames(displayedOptions, selected), broadcasted);
     }, [JSON.stringify(options), JSON.stringify(selected), JSON.stringify(broadcasted)]);
 
     // Always render even with a single locale (Feature 1: show selector for single-country newsrooms)
@@ -43,9 +43,9 @@ export namespace Languages {
     }
 }
 
-function withDisplayNames(options: Languages.Option[]): LanguagesDropdown.Option[] {
+function withDisplayNames(options: Languages.Option[], currentLocale?: string): LanguagesDropdown.Option[] {
     return options.map((option): LanguagesDropdown.Option => {
-        const { displayText, countryCode } = formatLocaleDisplay(option.code, option.title);
+        const { displayText, countryCode } = formatLocaleDisplay(option.code, option.title, currentLocale);
         return {
             code: option.code,
             href: option.href,

@@ -3,10 +3,16 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { IconGlobe } from '@/icons';
 import type { IconComponentType } from '@/icons';
 import * as FlagIcons from '@/icons/flags';
 
 import styles from './LocalePickerModal.module.scss';
+
+/** Special-case overrides: locale/country code → flag country code */
+const FLAG_CODE_OVERRIDES: Record<string, string> = {
+    en: 'gb',
+};
 
 export interface LocaleOption {
     code: string;
@@ -29,14 +35,17 @@ function setCookie(name: string, value: string, days: number) {
 }
 
 function CountryFlagIcon({ countryCode, countryName }: { countryCode: string; countryName: string }) {
-    const flagKey = `Flag${countryCode.toUpperCase()}` as keyof typeof FlagIcons;
+    const resolvedCode = FLAG_CODE_OVERRIDES[countryCode.toLowerCase()] ?? countryCode;
+    const flagKey = `Flag${resolvedCode.toUpperCase()}` as keyof typeof FlagIcons;
     const FlagIcon = FlagIcons[flagKey] as IconComponentType | undefined;
-
-    if (!FlagIcon) return null;
 
     return (
         <span className={styles.flagWrapper} aria-hidden>
-            <FlagIcon className={styles.flagIcon} aria-label={`${countryName} flag`} />
+            {FlagIcon ? (
+                <FlagIcon className={styles.flagIcon} aria-label={`${countryName} flag`} />
+            ) : (
+                <IconGlobe className={styles.globeIcon} aria-label={`${countryName}`} />
+            )}
         </span>
     );
 }
@@ -79,12 +88,10 @@ export function LocalePickerModal({ options, logoUrl }: Props) {
                             className={styles.optionButton}
                             onClick={() => handleChoose(option)}
                         >
-                            {option.countryCode && (
-                                <CountryFlagIcon
-                                    countryCode={option.countryCode}
-                                    countryName={option.name}
-                                />
-                            )}
+                            <CountryFlagIcon
+                                countryCode={option.countryCode ?? option.code}
+                                countryName={option.name}
+                            />
                             <span className={styles.name}>{option.name}</span>
                         </button>
                     ))}

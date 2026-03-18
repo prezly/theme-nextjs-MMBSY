@@ -26,6 +26,17 @@ $header-height: 88px;
         }
     }
 
+    .flagToggle {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-1;
+    }
+
+    .flagToggleCaret {
+        opacity: 0.7;
+        flex-shrink: 0;
+    }
+
     .navigationButton {
         color: var(--prezly-header-link-color);
 
