@@ -75,22 +75,12 @@ export async function generateMetadata(props: Props) {
     );
 }
 
-/** Convert a 2-letter ISO country code to a Unicode flag emoji (e.g. "be" → "🇧🇪"). */
-function countryCodeToFlagEmoji(code: string): string {
-    return code
-        .toUpperCase()
-        .split('')
-        .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
-        .join('');
-}
-
 async function buildLocalePickerOptions(): Promise<LocaleOption[]> {
     const languages = await app().languages();
     const { generateUrl } = await routing();
 
     return languages.map((lang) => {
         const countryCode = parseLocaleCode(lang.code);
-        const flagEmoji = countryCode ? countryCodeToFlagEmoji(countryCode) : '';
         const countryName = countryCode
             ? (new Intl.DisplayNames(['en'], { type: 'region' }).of(countryCode.toUpperCase()) ??
               lang.locale.native_name)
@@ -100,7 +90,7 @@ async function buildLocalePickerOptions(): Promise<LocaleOption[]> {
             code: lang.code,
             href: generateUrl('index', { localeCode: lang.code }),
             name: countryName,
-            flagEmoji,
+            countryCode: countryCode ?? null,
         };
     });
 }
@@ -114,6 +104,7 @@ export default async function MainLayout(props: Props) {
     const { isTrackingEnabled } = analytics();
     const newsroom = await app().newsroom();
     const localePickerOptions = await buildLocalePickerOptions();
+    const logoUrl = newsroom.newsroom_logo?.url ?? null;
 
     return (
         <PreviewSettingsProvider>
@@ -150,7 +141,7 @@ export default async function MainLayout(props: Props) {
                             <Footer localeCode={localeCode} />
                         </div>
                         <ScrollToTopButton />
-                        <LocalePickerModal options={localePickerOptions} />
+                        <LocalePickerModal options={localePickerOptions} logoUrl={logoUrl} />
                         <CookieConsent localeCode={localeCode} />
                         <PreviewPageMask />
                         <WindowScrollListener />

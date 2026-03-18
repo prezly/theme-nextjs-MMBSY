@@ -3,17 +3,21 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import type { IconComponentType } from '@/icons';
+import * as FlagIcons from '@/icons/flags';
+
 import styles from './LocalePickerModal.module.scss';
 
 export interface LocaleOption {
     code: string;
     href: string;
     name: string;
-    flagEmoji: string;
+    countryCode: string | null;
 }
 
 interface Props {
     options: LocaleOption[];
+    logoUrl?: string | null;
 }
 
 const STORAGE_KEY = 'mmbsy_locale_chosen';
@@ -24,7 +28,20 @@ function setCookie(name: string, value: string, days: number) {
     document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
-export function LocalePickerModal({ options }: Props) {
+function CountryFlagIcon({ countryCode, countryName }: { countryCode: string; countryName: string }) {
+    const flagKey = `Flag${countryCode.toUpperCase()}` as keyof typeof FlagIcons;
+    const FlagIcon = FlagIcons[flagKey] as IconComponentType | undefined;
+
+    if (!FlagIcon) return null;
+
+    return (
+        <span className={styles.flagWrapper} aria-hidden>
+            <FlagIcon className={styles.flagIcon} aria-label={`${countryName} flag`} />
+        </span>
+    );
+}
+
+export function LocalePickerModal({ options, logoUrl }: Props) {
     const [visible, setVisible] = useState(false);
     const router = useRouter();
 
@@ -48,9 +65,12 @@ export function LocalePickerModal({ options }: Props) {
     return (
         <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Choose your market">
             <div className={styles.modal}>
-                <p className={styles.subtitle}>Welcome to the</p>
-                <h2 className={styles.title}>MMBSY Newsroom</h2>
-                <p className={styles.prompt}>Please choose your location</p>
+                <p className={styles.subtitle}>Welcome to</p>
+                {logoUrl && (
+                    <img src={logoUrl} alt="MMBSY" className={styles.logo} />
+                )}
+                <p className={styles.newsroomLabel}>Newsroom</p>
+                <p className={styles.prompt}>Choose location</p>
                 <div className={styles.options}>
                     {options.map((option) => (
                         <button
@@ -59,7 +79,12 @@ export function LocalePickerModal({ options }: Props) {
                             className={styles.optionButton}
                             onClick={() => handleChoose(option)}
                         >
-                            <span className={styles.flag}>{option.flagEmoji}</span>
+                            {option.countryCode && (
+                                <CountryFlagIcon
+                                    countryCode={option.countryCode}
+                                    countryName={option.name}
+                                />
+                            )}
                             <span className={styles.name}>{option.name}</span>
                         </button>
                     ))}

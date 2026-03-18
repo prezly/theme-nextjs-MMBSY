@@ -28,6 +28,7 @@
             "@/events": ["./src/events"],
             "@/hooks": ["./src/hooks/"],
             "@/icons": ["./src/icons/"],
+            "@/icons/flags": ["./src/icons/flags/"],
             "@/modules/*": ["./src/modules/*"],
             "@/public/*": ["./src/public/*"],
             "@/styles/*": ["./src/styles/*"],

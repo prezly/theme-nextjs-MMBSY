@@ -27,19 +27,30 @@
 }
 
 .subtitle {
-    margin: 0 0 $spacing-1;
+    margin: 0 0 $spacing-3;
     font-size: $font-size-s;
     color: var(--prezly-text-color-secondary, #6b7280);
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
 
-.title {
-    margin: 0 0 $spacing-2;
-    font-size: 1.75rem;
-    font-weight: 700;
+.logo {
+    display: block;
+    max-width: 180px;
+    max-height: 64px;
+    width: auto;
+    height: auto;
+    margin: 0 auto $spacing-2;
+    object-fit: contain;
+}
+
+.newsroomLabel {
+    margin: 0 0 $spacing-4;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: var(--prezly-text-color, #111827);
-    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .prompt {
@@ -90,12 +101,22 @@
     }
 }
 
-.flag {
-    font-size: 3rem;
-    line-height: 1;
+.flagWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.flagIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
 
     @include mobile-only {
-        font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
     }
 }
 
