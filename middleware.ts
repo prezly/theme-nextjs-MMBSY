@@ -1,6 +1,6 @@
 import { Locale } from '@prezly/theme-kit-nextjs';
 import { IntlMiddleware } from '@prezly/theme-kit-nextjs/middleware';
-import type { NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 import { configureAppRouter, initPrezlyClient } from '@/adapters/server';
 
@@ -38,12 +38,76 @@ async function retrieveNewsroomLocalesFromApi(headers: Headers) {
     return prioritizedLanguages.map((lang) => lang.code);
 }
 
+/**
+ * Find a configured locale whose country code matches the visitor's IP country.
+ * E.g. country="NL" matches locale "nl"; country="BE" matches locale "nl-BE".
+ */
+function findLocaleForCountry(country: string, locales: Locale.Code[]): Locale.Code | null {
+    const lc = country.toLowerCase();
+    return (
+        locales.find((code) => {
+            const normalized = code.toLowerCase().replace('_', '-');
+            const parts = normalized.split('-');
+            // Multi-part (e.g. nl-be) → match on region (last segment)
+            // Single-part (e.g. nl) → match on language code (same as country for BE/NL)
+            const region = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+            return region === lc;
+        }) ?? null
+    );
+}
+
+/**
+ * Build a geo-based redirect response if:
+ *  - No locale-choice cookie is set (user hasn't chosen manually)
+ *  - Vercel provides an IP country header
+ *  - That country maps to a configured locale
+ *
+ * Sets a 30-day cookie to prevent re-redirecting on future visits.
+ */
+function getGeoRedirect(
+    request: NextRequest,
+    locales: Locale.Code[],
+): NextResponse | null {
+    // Skip if user already chose or was already geo-redirected
+    if (
+        request.cookies.has('mmbsy_locale_chosen') ||
+        request.cookies.has('mmbsy_geo_redirected')
+    ) {
+        return null;
+    }
+
+    const country =
+        request.headers.get('x-vercel-ip-country') ??
+        request.headers.get('cf-ipcountry'); // Cloudflare fallback
+
+    if (!country || country === 'XX') return null; // XX = unknown
+
+    const matchingLocale = findLocaleForCountry(country, locales);
+    if (!matchingLocale) return null;
+
+    const url = request.nextUrl.clone();
+    url.pathname = `/${matchingLocale}`;
+
+    const response = NextResponse.redirect(url);
+    response.cookies.set('mmbsy_geo_redirected', '1', {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        sameSite: 'lax',
+        path: '/',
+    });
+
+    return response;
+}
+
 export async function middleware(request: NextRequest) {
     const locales =
         parseNewsroomLocalesFromHeaders(request.headers) ??
         (await retrieveNewsroomLocalesFromApi(request.headers));
 
     const [defaultLocale] = locales; // default is expected to always be the first in the list
+
+    // Geo-redirect: send visitors to their market locale on first visit
+    const geoRedirect = getGeoRedirect(request, locales);
+    if (geoRedirect) return geoRedirect;
 
     return IntlMiddleware.handle(request, {
         router: configureAppRouter(),

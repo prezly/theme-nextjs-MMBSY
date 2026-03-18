@@ -3,7 +3,10 @@ import type { Viewport } from 'next';
 import type { ReactNode } from 'react';
 
 import { ThemeSettingsProvider } from '@/adapters/client';
-import { analytics, app, generateRootMetadata, themeSettings } from '@/adapters/server';
+import { analytics, app, generateRootMetadata, routing, themeSettings } from '@/adapters/server';
+import { LocalePickerModal } from '@/custom/components/LocalePickerModal';
+import type { LocaleOption } from '@/custom/components/LocalePickerModal';
+import { parseLocaleCode } from '@/utils';
 import { CategoryImageFallbackProvider } from '@/components/CategoryImage';
 import { PreviewPageMask } from '@/components/PreviewPageMask';
 import { ScrollToTopButton } from '@/components/ScrollToTopButton';
@@ -72,6 +75,36 @@ export async function generateMetadata(props: Props) {
     );
 }
 
+/** Convert a 2-letter ISO country code to a Unicode flag emoji (e.g. "be" → "🇧🇪"). */
+function countryCodeToFlagEmoji(code: string): string {
+    return code
+        .toUpperCase()
+        .split('')
+        .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+        .join('');
+}
+
+async function buildLocalePickerOptions(): Promise<LocaleOption[]> {
+    const languages = await app().languages();
+    const { generateUrl } = await routing();
+
+    return languages.map((lang) => {
+        const countryCode = parseLocaleCode(lang.code);
+        const flagEmoji = countryCode ? countryCodeToFlagEmoji(countryCode) : '';
+        const countryName = countryCode
+            ? (new Intl.DisplayNames(['en'], { type: 'region' }).of(countryCode.toUpperCase()) ??
+              lang.locale.native_name)
+            : lang.locale.native_name;
+
+        return {
+            code: lang.code,
+            href: generateUrl('index', { localeCode: lang.code }),
+            name: countryName,
+            flagEmoji,
+        };
+    });
+}
+
 export default async function MainLayout(props: Props) {
     const params = await props.params;
 
@@ -80,6 +113,7 @@ export default async function MainLayout(props: Props) {
     const { code: localeCode, isoCode, direction } = Locale.from(params.localeCode);
     const { isTrackingEnabled } = analytics();
     const newsroom = await app().newsroom();
+    const localePickerOptions = await buildLocalePickerOptions();
 
     return (
         <PreviewSettingsProvider>
@@ -116,6 +150,7 @@ export default async function MainLayout(props: Props) {
                             <Footer localeCode={localeCode} />
                         </div>
                         <ScrollToTopButton />
+                        <LocalePickerModal options={localePickerOptions} />
                         <CookieConsent localeCode={localeCode} />
                         <PreviewPageMask />
                         <WindowScrollListener />

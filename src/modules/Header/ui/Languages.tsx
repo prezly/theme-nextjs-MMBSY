@@ -1,8 +1,9 @@
 'use client';
 
 import type { Locale } from '@prezly/theme-kit-nextjs';
-import { Intl } from '@prezly/theme-kit-nextjs';
 import { useMemo } from 'react';
+
+import { formatLocaleDisplay } from '@/utils';
 
 import { useBroadcastedTranslations } from '../../Broadcast';
 
@@ -16,10 +17,11 @@ export function Languages({ selected, options, ...rest }: Languages.Props) {
         const displayedOptions = options.filter(
             (option) => option.code === selected || broadcasted[option.code] || option.stories > 0,
         );
-        return withHrefOverrides(withShortenedTitles(displayedOptions), broadcasted);
+        return withHrefOverrides(withDisplayNames(displayedOptions), broadcasted);
     }, [JSON.stringify(options), JSON.stringify(selected), JSON.stringify(broadcasted)]);
 
-    if (dropdownOptions.length <= 1) {
+    // Always render even with a single locale (Feature 1: show selector for single-country newsrooms)
+    if (dropdownOptions.length === 0) {
         return null;
     }
 
@@ -27,28 +29,30 @@ export function Languages({ selected, options, ...rest }: Languages.Props) {
 }
 
 export namespace Languages {
-    export interface Option extends LanguagesDropdown.Option {
+    export interface Option {
+        code: Locale.Code;
+        title: string;
+        href: string;
         stories: number;
     }
-    export interface Props extends LanguagesDropdown.Props {
+    export interface Props {
+        selected?: Locale.Code;
         options: Option[];
+        buttonClassName?: string;
+        navigationItemClassName?: string;
     }
 }
 
-function withShortenedTitles(options: Languages.Option[]): LanguagesDropdown.Option[] {
-    return options
-        .map((option) => ({
+function withDisplayNames(options: Languages.Option[]): LanguagesDropdown.Option[] {
+    return options.map((option): LanguagesDropdown.Option => {
+        const { displayText, countryCode } = formatLocaleDisplay(option.code, option.title);
+        return {
             code: option.code,
-            native_name: option.title,
             href: option.href,
-        }))
-        .map(
-            (locale, _, locales): LanguagesDropdown.Option => ({
-                code: locale.code,
-                href: locale.href,
-                title: Intl.getLanguageDisplayName(locale, locales),
-            }),
-        );
+            title: displayText,
+            countryCode,
+        };
+    });
 }
 
 function withHrefOverrides(

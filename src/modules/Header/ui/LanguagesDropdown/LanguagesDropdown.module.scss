@@ -10,7 +10,67 @@
     }
 }
 
+// Trigger button content: flag + label side by side
+.triggerContent {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-1;
+}
+
+// List item: flex row for flag + label
+.languageItem {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+}
+
+// Link is flex so flag and label align vertically
+.languageLink {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+}
+
+// Fixed-size flag wrapper (3:2 aspect ratio)
+.flagWrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.875em;
+    height: 1.25em;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+// SVG fills wrapper, cover trims non-3:2 flags for uniform appearance
+.flag {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    vertical-align: middle;
+}
+
+.languageLabel {
+    flex: 1;
+    white-space: nowrap;
+}
+
+// Active language: non-clickable with subtle highlight
 .disabled {
     pointer-events: none;
-    opacity: 0.5;
+    background-color: rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.06),
+        0 2px 6px rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
+
+    .languageLabel {
+        font-weight: 600;
+    }
+
+    @include tablet-up {
+        background-color: var(--prezly-background-color-secondary, rgba(0, 0, 0, 0.06));
+    }
 }

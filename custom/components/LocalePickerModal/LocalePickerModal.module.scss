@@ -1,0 +1,107 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    padding: $spacing-4;
+}
+
+.modal {
+    background: var(--prezly-background-color, #fff);
+    border-radius: 12px;
+    padding: $spacing-8;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.2),
+        0 4px 16px rgba(0, 0, 0, 0.1);
+
+    @include mobile-only {
+        padding: $spacing-6;
+    }
+}
+
+.subtitle {
+    margin: 0 0 $spacing-1;
+    font-size: $font-size-s;
+    color: var(--prezly-text-color-secondary, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.title {
+    margin: 0 0 $spacing-2;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--prezly-text-color, #111827);
+    line-height: 1.2;
+}
+
+.prompt {
+    margin: 0 0 $spacing-6;
+    font-size: $font-size-m;
+    color: var(--prezly-text-color-secondary, #6b7280);
+}
+
+.options {
+    display: flex;
+    gap: $spacing-4;
+    justify-content: center;
+
+    @include mobile-only {
+        flex-direction: column;
+        gap: $spacing-3;
+    }
+}
+
+.optionButton {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-5 $spacing-4;
+    border: 2px solid var(--prezly-border-color, #e5e7eb);
+    border-radius: 10px;
+    background: var(--prezly-background-color, #fff);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    min-width: 0;
+
+    &:hover {
+        border-color: var(--prezly-accent-color, #2563eb);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    @include mobile-only {
+        flex-direction: row;
+        padding: $spacing-4;
+        gap: $spacing-3;
+    }
+}
+
+.flag {
+    font-size: 3rem;
+    line-height: 1;
+
+    @include mobile-only {
+        font-size: 2rem;
+    }
+}
+
+.name {
+    font-size: $font-size-m;
+    font-weight: 600;
+    color: var(--prezly-text-color, #111827);
+    white-space: nowrap;
+}

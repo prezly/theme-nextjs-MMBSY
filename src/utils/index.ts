@@ -1,4 +1,5 @@
 export { analytics } from './analytics';
+export { formatLocaleDisplay, parseLocaleCode } from './localeDisplay';
 export { clamp } from './clamp';
 export { ensureTrailingSlash } from './ensureTrailingSlash';
 export { getNewsroomPlaceholderColors } from './getNewsroomPlaceholderColors';
