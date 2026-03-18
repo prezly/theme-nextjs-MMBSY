@@ -6,7 +6,7 @@ import { ThemeSettingsProvider } from '@/adapters/client';
 import { analytics, app, generateRootMetadata, routing, themeSettings } from '@/adapters/server';
 import { LocalePickerModal } from '@/custom/components/LocalePickerModal';
 import type { LocaleOption } from '@/custom/components/LocalePickerModal';
-import { parseLocaleCode } from '@/utils';
+import { getUploadcareImage, parseLocaleCode } from '@/utils';
 import { CategoryImageFallbackProvider } from '@/components/CategoryImage';
 import { PreviewPageMask } from '@/components/PreviewPageMask';
 import { ScrollToTopButton } from '@/components/ScrollToTopButton';
@@ -104,7 +104,7 @@ export default async function MainLayout(props: Props) {
     const { isTrackingEnabled } = analytics();
     const newsroom = await app().newsroom();
     const localePickerOptions = await buildLocalePickerOptions();
-    const logoUrl = newsroom.newsroom_logo?.cdnUrl ?? null;
+    const logoUrl = getUploadcareImage(newsroom.newsroom_logo)?.cdnUrl ?? null;
 
     return (
         <PreviewSettingsProvider>

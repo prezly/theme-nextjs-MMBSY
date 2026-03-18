@@ -21,7 +21,7 @@ import { Button, ButtonLink } from '@/components/Button';
 import { CategoriesBar } from '@/components/CategoriesBar';
 import { Link } from '@/components/Link';
 import { useDevice, usePreviewSettings } from '@/hooks';
-import { IconCaret, IconClose, IconExternalLink, IconMenu, IconSearch } from '@/icons';
+import { IconCaret, IconClose, IconExternalLink, IconSearch } from '@/icons';
 import { useBroadcastedPageTypeCheck } from '@/modules/Broadcast';
 import type { ThemeSettings } from '@/theme-settings';
 import type { SearchSettings } from '@/types';
