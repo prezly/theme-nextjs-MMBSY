@@ -18,6 +18,10 @@ export const { useApp: app } = AppHelperAdapter.connect({
             return contentDelivery.stories(params, { include: ['thumbnail_image'] });
         }
 
+        function sitemapStories(params: ContentDelivery.stories.SearchParams) {
+            return contentDelivery.stories(params);
+        }
+
         function allStories(params?: ContentDelivery.allStories.SearchParams) {
             return contentDelivery.allStories(params, { include: ['thumbnail_image'] });
         }
@@ -28,6 +32,7 @@ export const { useApp: app } = AppHelperAdapter.connect({
             timezone: () => contentDelivery.newsroom().then((newsroom) => newsroom.timezone),
             story,
             stories,
+            sitemapStories,
             allStories,
             themeSettings,
         };
