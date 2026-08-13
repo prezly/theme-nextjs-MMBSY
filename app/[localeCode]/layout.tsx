@@ -1,5 +1,6 @@
 import { Locale, Newsrooms } from '@prezly/theme-kit-nextjs';
 import type { Viewport } from 'next';
+import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { ThemeSettingsProvider } from '@/adapters/client';
@@ -22,7 +23,7 @@ import {
 import { CookieConsentProvider } from '@/modules/CookieConsent';
 import { CookieConsent } from '@/modules/CookieConsent/CookieConsent';
 import { Footer } from '@/modules/Footer';
-import { Branding, Preconnect } from '@/modules/Head';
+import { Branding, JsonLd, Preconnect } from '@/modules/Head';
 import { Header } from '@/modules/Header';
 import { HubBreadcrumbs } from '@/modules/HubBreadcrumbs';
 import { LocalePopup } from '@/modules/LocalePopup';
@@ -31,6 +32,7 @@ import { Notifications } from '@/modules/Notifications';
 import { PreviewBar } from '@/modules/PreviewBar';
 import { RoutingProvider } from '@/modules/Routing';
 import { SubscribeForm } from '@/modules/SubscribeForm';
+import { buildOrganizationSchema, sanitizeNewsroom } from '@/utils';
 
 import '@prezly/content-renderer-react-js/styles.css';
 import '@prezly/uploadcare-image/build/styles.css';
@@ -56,6 +58,12 @@ export async function generateViewport(): Promise<Viewport> {
 
 export async function generateMetadata(props: Props) {
     const params = await props.params;
+
+    // Guard against an unrecognized locale segment reaching this route (e.g. a
+    // path that bypassed the i18n middleware). `Locale.from` throws on invalid
+    // input, which would surface as a 500 — a 404 is the correct response here.
+    if (!Locale.isValid(params.localeCode)) notFound();
+
     const newsroom = await app().newsroom();
 
     const faviconUrl = Newsrooms.getFaviconUrl(newsroom, 180);
@@ -79,9 +87,15 @@ export default async function MainLayout(props: Props) {
 
     const { children } = props;
 
+    // See note in `generateMetadata`: 404 rather than 500 on an invalid locale.
+    if (!Locale.isValid(params.localeCode)) notFound();
+
     const { code: localeCode, isoCode, direction } = Locale.from(params.localeCode);
     const { isTrackingEnabled } = analytics();
-    const newsroom = await app().newsroom();
+    const [newsroom, companyInformation] = await Promise.all([
+        app().newsroom(),
+        app().companyInformation(localeCode),
+    ]);
 
     return (
         <PreviewSettingsProvider>
@@ -90,6 +104,7 @@ export default async function MainLayout(props: Props) {
                     <meta name="og:locale" content={isoCode} />
                     <Preconnect />
                     <Branding />
+                    <JsonLd schema={buildOrganizationSchema({ newsroom, companyInformation })} />
                 </head>
                 <body>
                     <AppContext localeCode={localeCode}>
@@ -109,7 +124,7 @@ export default async function MainLayout(props: Props) {
                             />
                         )}
                         <Notifications localeCode={localeCode} />
-                        <PreviewBar newsroom={newsroom} />
+                        <PreviewBar newsroom={sanitizeNewsroom(newsroom)} />
                         <div className={styles.layout}>
                             <Header localeCode={localeCode} />
                             <HubBreadcrumbs />

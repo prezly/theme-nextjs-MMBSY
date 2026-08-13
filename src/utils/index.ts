@@ -15,6 +15,19 @@ export { parseLimit } from './parseLimit';
 export { parseOffset } from './parseOffset';
 export { parsePreviewSearchParams } from './parsePreviewSearchParams';
 export { decodePreviewHash } from './previewLink';
+export { sanitizeGalleries, sanitizeGallery } from './sanitizeGallery';
+export type { PublicGallery } from './sanitizeGallery';
+export { sanitizeNewsroom, sanitizeNewsroomRef, sanitizeNewsrooms } from './sanitizeNewsroom';
+export type { PublicNewsroom, PublicNewsroomRef } from './sanitizeNewsroom';
+export { sanitizeStories, sanitizeStory } from './sanitizeStory';
+export type { PublicListStory, PublicStory } from './sanitizeStory';
 export * from './previewUtils';
 export { slugifyHeading } from './slugifyHeading';
+export {
+    buildNewsArticleSchema,
+    buildOrganizationSchema,
+    buildWebsiteSchema,
+    serializeJsonLd,
+    type JsonLdSchema,
+} from './structuredData';
 export { withoutUndefined } from './withoutUndefined';
