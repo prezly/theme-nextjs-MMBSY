@@ -1,9 +1,11 @@
+import { Story as StorySdk } from '@prezly/sdk';
 import type { Locale } from '@prezly/theme-kit-nextjs';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, permanentRedirect, redirect } from 'next/navigation';
 
 import { app, configureAppRouter, generateStoryPageMetadata } from '@/adapters/server';
+import { JsonLd } from '@/modules/Head';
 import { Story } from '@/modules/Story';
-import { parsePreviewSearchParams } from '@/utils';
+import { buildNewsArticleSchema, parsePreviewSearchParams, sanitizeStories } from '@/utils';
 
 import { Broadcast } from '../components';
 
@@ -25,13 +27,20 @@ async function resolve(params: Props['params']) {
         return redirect(configureAppRouter().generate('story', { slug: story.slug }));
     }
 
+    if (story.visibility === StorySdk.Visibility.PUBLIC && story.seo_settings.canonical_url) {
+        const newsroom = await app().newsroom();
+        if (newsroom.redirect_to_canonical_url) {
+            permanentRedirect(story.seo_settings.canonical_url);
+        }
+    }
+
     const { stories: relatedStories } = await app().stories({
         limit: 3,
         locale: localeCode,
         query: JSON.stringify({ slug: { $ne: slug } }),
     });
 
-    return { relatedStories, story };
+    return { relatedStories: sanitizeStories(relatedStories), story };
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -43,11 +52,18 @@ export async function generateMetadata({ params }: Props) {
 export default async function StoryPage(props: Props) {
     const searchParams = await props.searchParams;
     const { story, relatedStories } = await resolve(props.params);
-    const settings = await app().themeSettings();
+    const [settings, newsroom, companyInformation] = await Promise.all([
+        app().themeSettings(),
+        app().newsroom(),
+        app().companyInformation(story.culture.code),
+    ]);
     const themeSettings = parsePreviewSearchParams(searchParams, settings);
 
     return (
         <>
+            {story.visibility === StorySdk.Visibility.PUBLIC && (
+                <JsonLd schema={buildNewsArticleSchema({ story, newsroom, companyInformation })} />
+            )}
             <Broadcast story={story} />
             <Story
                 story={story}

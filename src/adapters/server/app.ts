@@ -26,6 +26,14 @@ export const { useApp: app } = AppHelperAdapter.connect({
             return contentDelivery.allStories(params, { include: ['thumbnail_image'] });
         }
 
+        async function policies() {
+            const { uuid } = await contentDelivery.newsroom();
+            const { policies: result } = await client.newsrooms.get(uuid, {
+                include: ['policies'],
+            });
+            return result;
+        }
+
         return {
             ...contentDelivery,
             client,
@@ -35,6 +43,9 @@ export const { useApp: app } = AppHelperAdapter.connect({
             sitemapStories,
             allStories,
             themeSettings,
+            policies,
+            dateFormat: () => contentDelivery.newsroom().then((newsroom) => newsroom.date_format),
+            timeFormat: () => contentDelivery.newsroom().then((newsroom) => newsroom.time_format),
         };
     },
 });
