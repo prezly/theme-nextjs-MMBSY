@@ -66,8 +66,11 @@
 
 .socials {
     display: flex;
+    flex-wrap: wrap;
+    column-gap: $spacing-4;
 
-    .link:last-child {
+    .link {
+        max-width: 100%;
         margin-right: 0;
     }
 }
