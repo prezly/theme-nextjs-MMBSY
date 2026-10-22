@@ -28,8 +28,8 @@ importers:
         specifier: 4.3.0
         version: 4.3.0(react@19.2.4)
       '@prezly/content-renderer-react-js':
-        specifier: 0.45.0
-        version: 0.45.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 0.45.1
+        version: 0.45.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@prezly/sdk':
         specifier: 26.15.0
         version: 26.15.0
@@ -162,10 +162,6 @@ importers:
         version: 5.8.3
 
 packages:
-
-  '@noble/hashes@1.8.0':
-    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
-    engines: {node: ^14.21.3 || >=16}
 
   '@algolia/abtesting@1.22.0':
     resolution: {integrity: sha512-BFR6zNowNKcY7Ou7TaJc9QWexES4YKPbmf/OTFofpdsdhz4x6q0lbxp3duO0EHnyrN7rE4ba/TSXuY+BDGu4+g==}
@@ -1248,6 +1244,10 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@noble/hashes@1.8.0':
+    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
+    engines: {node: ^14.21.3 || >=16}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1566,8 +1566,8 @@ packages:
   '@prezly/content-format@0.72.0':
     resolution: {integrity: sha512-I2Nv/b6NpB9/uMZ0Mb1hZOTdWRi04NtHUYV5ipjmOVCp2z5LoR9xMO1iW1OmMtTUR/fh36yKJvVnnEHdth7BNw==}
 
-  '@prezly/content-renderer-react-js@0.45.0':
-    resolution: {integrity: sha512-fHBQKx7oQ9o72yr1PMBX8kHPGPbqDD8RQyqYPpFYvomgWcCsBhRj3Fi3Xwft4R3fyTmCyvcMD8NjaWo5iAk8CQ==}
+  '@prezly/content-renderer-react-js@0.45.1':
+    resolution: {integrity: sha512-Z2SnTU8b6bQxOUnRR63SUrYm5VlhcZNvXo4zEUYvNDcWBFNhujoWLwRcqY/fZ9insuu7omE6z6Aio8Hp0aPz5g==}
     peerDependencies:
       react: ^18 || ^19
       react-dom: ^18 || ^19
@@ -4519,8 +4519,6 @@ packages:
 
 snapshots:
 
-  '@noble/hashes@1.8.0': {}
-
   '@algolia/abtesting@1.22.0':
     dependencies:
       '@algolia/client-common': 5.56.0
@@ -5735,6 +5733,8 @@ snapshots:
   '@next/swc-win32-x64-msvc@15.5.20':
     optional: true
 
+  '@noble/hashes@1.8.0': {}
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -6090,7 +6090,7 @@ snapshots:
       '@prezly/uploads': 0.2.1
       is-plain-object: 5.0.0
 
-  '@prezly/content-renderer-react-js@0.45.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@prezly/content-renderer-react-js@0.45.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@prezly/linear-partition': 1.0.3
       '@prezly/sdk': 26.15.0
